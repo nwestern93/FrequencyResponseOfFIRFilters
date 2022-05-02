@@ -1,0 +1,639 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Lab 3 Exercise 3.1 Nulling Filters for Rejection</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-05-02"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Lab 3 Exercise 3.1 Nulling Filters for Rejection</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">3.1 part A</a></li><li><a href="#2">3.1 Part B</a></li><li><a href="#3">3.1 Part C</a></li><li><a href="#4">3.1 Part D</a></li><li><a href="#5">3.1 Part E</a></li><li><a href="#6">3.1 Part F</a></li><li><a href="#7">Simple Bandpass Filter Design: Lab P-12: 3.2 Lab Exercise</a></li><li><a href="#8">3.2 (a)</a></li><li><a href="#9">3.2 (b)</a></li><li><a href="#11">3.2 (c)</a></li><li><a href="#12">3.2 (d)</a></li><li><a href="#13">3.2 (e)</a></li><li><a href="#15">3.2 (f)</a></li></ul></div><h2 id="1">3.1 part A</h2><p>In part A we are tasked with finding the coefficients associated with the nulling filters that will force the frequency response of a desired frequency to 0 which in this case is 0.44pi and 0.7pi. Associated plots of magnitude and phase are presented to show the filters' efficacy.</p><pre class="codeinput">clear,clc
+set(groot, <span class="string">'defaultLinelinewidth'</span>,3) <span class="comment">% plotting preference</span>
+
+ww = -pi:(pi/100):pi;
+bk1 = [1 -2*cos(0.44*pi) 1] <span class="comment">% Filter coefficients of filter 1</span>
+bk2 = [1 -2*cos(0.7*pi) 1] <span class="comment">% Filter coefficients of filter 2</span>
+filter1 = freqz(bk1,1,ww);
+filter2 = freqz(bk2,1,ww);
+
+figure
+subplot(4,1,1);
+plot(ww,abs(filter1),<span class="string">'c'</span>)
+title(<span class="string">'0.44pi'</span>)
+xlabel(<span class="string">'Frequency'</span>)
+ylabel(<span class="string">'Magnitude'</span>)
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)<span class="comment">%Plots magnitude response of filter 1</span>
+
+subplot(4,1,2);
+plot(ww,angle(filter1),<span class="string">'c'</span>)
+title(<span class="string">'0.44pi'</span>)
+xlabel(<span class="string">'Frequency'</span>)
+ylabel(<span class="string">'Phase'</span>)
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)<span class="comment">%Plots phase response of filter 1</span>
+
+subplot(4,1,3);
+plot(ww,abs(filter2),<span class="string">'c'</span>)
+title(<span class="string">'0.7pi'</span>)
+xlabel(<span class="string">'Frequency'</span>)
+ylabel(<span class="string">'Magnitude'</span>)
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)<span class="comment">%Plots magnitude response of filter 2</span>
+
+subplot(4,1,4);
+plot(ww,angle(filter2),<span class="string">'c'</span>) <span class="comment">%Plots phase response of filter 2</span>
+title(<span class="string">'0.7pi'</span>)
+xlabel(<span class="string">'Frequency'</span>)
+ylabel(<span class="string">'Phase'</span>)
+set(gcf,<span class="string">'InvertHardcopy'</span>,<span class="string">'off'</span>,<span class="string">'color'</span>,<span class="string">'w'</span>,<span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="string">'OuterPosition'</span>, [0 0 1 1])
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)
+</pre><pre class="codeoutput">
+bk1 =
+
+    1.0000   -0.3748    1.0000
+
+
+bk2 =
+
+    1.0000    1.1756    1.0000
+
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <h2 id="2">3.1 Part B</h2><p>In Part B we are tasked with generated an input signal from a given equation for the first 150 samples</p><pre class="codeinput">nn = 0:149;
+xn = 5*cos(0.3*pi.*nn) + 22*cos((0.44*pi.*nn) - (pi/3)) + 22*cos((0.7*pi.*nn)- (pi/4)); <span class="comment">%Input signal</span>
+
+figure
+stem(nn,xn(nn+1),<span class="string">'c'</span>,<span class="string">'LineWidth'</span>,3)
+title(<span class="string">"Sum of Sinusoids"</span>)
+xlabel(<span class="string">'Time Index (n)'</span>)
+ylabel(<span class="string">'x(n)'</span>)
+set(gcf,<span class="string">'InvertHardcopy'</span>,<span class="string">'off'</span>,<span class="string">'color'</span>,<span class="string">'w'</span>,<span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="string">'OuterPosition'</span>, [0 0 1 1])
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="main_02.png" alt=""> <h2 id="3">3.1 Part C</h2><p>Part C is the convolution of the input signal from Part B with the nulling filters created in Part A</p><pre class="codeinput">filter = conv(bk1,bk2);
+cascfilt = conv(filter, xn);
+</pre><h2 id="4">3.1 Part D</h2><p>Calculation by hand included as PDF within folder. Shown below is the plot of the first 40 points for the output data from Part C that was passed through the filter from Part A</p><pre class="codeinput">n = [1:40];
+figure
+plot(n-1, cascfilt(n)-1,<span class="string">'c'</span>) <span class="comment">% Plots cascade</span>
+title(<span class="string">'Filtered Output of Sum of Sinusoids'</span>)
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'x(n)'</span>)
+set(gcf,<span class="string">'InvertHardcopy'</span>,<span class="string">'off'</span>,<span class="string">'color'</span>,<span class="string">'w'</span>,<span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="string">'OuterPosition'</span>, [0 0 1 1])
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="main_03.png" alt=""> <h2 id="5">3.1 Part E</h2><p>Part E provides a comparision of the output signal of the sinususoidal input against the mathematically derived output for points 5 - 40.</p><pre class="codeinput">n1 = [5:40];
+n2 = [6:41];
+yn = 9.4*cos(0.3*pi*n1 - 1.88) + 0.001*cos(0.44*pi*n1 - 0.7) + 0.0007*cos(0.7*pi*n1 + 0.471);
+
+figure <span class="comment">% filtered ouput</span>
+subplot(2,1,1)
+plot(n1,cascfilt(n2),<span class="string">'-c*'</span>)
+title(<span class="string">'Filtered Output'</span>)
+ylim([-11 10])
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)
+
+subplot(2,1,2) <span class="comment">% mathematically derived output</span>
+plot(n1,yn,<span class="string">'-c*'</span>)
+ylim([-11 10])
+title(<span class="string">'Mathematical Formula'</span>)
+set(gcf,<span class="string">'InvertHardcopy'</span>,<span class="string">'off'</span>,<span class="string">'color'</span>,<span class="string">'w'</span>,<span class="string">'Units'</span>,<span class="string">'normalized'</span>,<span class="string">'OuterPosition'</span>, [0 0 1 1])
+set(gca,<span class="string">'color'</span>,<span class="string">'k'</span>)
+</pre><img vspace="5" hspace="5" src="main_04.png" alt=""> <h2 id="6">3.1 Part F</h2><pre class="codeinput"><span class="comment">% The output signal is different for the first few points because the filter is causal (depends only and past and present inputs).</span>
+<span class="comment">% It takes five points [0-4] for the full filter to affect the value of the sinusoid.</span>
+<span class="comment">% The length of the filter is five which is one less than the combined sum</span>
+<span class="comment">% of the lengths of the two nulling filters (each of length 3).</span>
+</pre><h2 id="7">Simple Bandpass Filter Design: Lab P-12: 3.2 Lab Exercise</h2><h2 id="8">3.2 (a)</h2><p>This section of code creates the filter h, with a cut-off frequency of <img src="main_eq00165519076306792909.png" alt="$\omega_c=0.44\pi$" style="width:52px;height:10px;">, using the equation:</p><p><img src="main_eq18025367874164822610.png" alt="$$h[n] = \frac{2}{L} cos(\hat{\omega}_c n), \hspace{1cm} 0 \le n < L$$" style="width:170px;height:23px;"></p><p>where L = 10. It create <img src="main_eq11614052705438996851.png" alt="$\omega$" style="width:7px;height:6px;"> from 0 to <img src="main_eq11942183284836905855.png" alt="$\pi$" style="width:6px;height:5px;">, with spacing of <img src="main_eq13594960822773849432.png" alt="$\pi/1000$" style="width:34px;height:11px;">. It then calls the function 'fourier_transform' to get H, the frequency response of the filter. 'fourier_transform' is a custom function that does the same thing as 'freqz'. 'freqz' was not used because it is not a built in function of MATLAB.</p><p>The code then finds the gain of the filter at <img src="main_eq00094476455926635284.png" alt="$0.3\pi$" style="width:20px;height:8px;">, <img src="main_eq07606976938092177301.png" alt="$0.44\pi$" style="width:26px;height:8px;">, and <img src="main_eq02627063514923424935.png" alt="$0.7\pi$" style="width:20px;height:8px;">. It does so by finding the index of <img src="main_eq11614052705438996851.png" alt="$\omega$" style="width:7px;height:6px;"> that matches the three frequencies, and finding the magnitude of H at those indices.</p><pre class="codeinput">clear;
+
+
+omega_cutoff = 0.44*pi;
+L = 10;
+n_L10 = 0:(L-1);
+h_L10 = (2/L)*cos(omega_cutoff * n_L10);
+w = 0:(pi/1000):pi;
+H_L10 = fourier_transform(h_L10,n_L10,w);
+
+<span class="comment">%Gain of the filter at different frequencies.</span>
+gain_1 = abs(H_L10(round(w,4) == round(0.3*pi, 4)));   <span class="comment">%gain_1 is at 0.3*pi</span>
+gain_2 = abs(H_L10(round(w,4) == round(0.44*pi, 4)));  <span class="comment">%gain_2 is at 0.44*pi</span>
+gain_3 = abs(H_L10(round(w,4) == round(0.7*pi, 4)));   <span class="comment">%gain_3 is at 0.7*pi</span>
+
+disp(<span class="string">"The gain at 0.3*pi is:"</span>);
+disp(gain_1);
+disp(<span class="string">"The gain at 0.44*pi is:"</span>);
+disp(gain_2);
+disp(<span class="string">"The gain at 0.7*pi is:"</span>);
+disp(gain_3);
+</pre><pre class="codeoutput">The gain at 0.3*pi is:
+    0.2836
+
+The gain at 0.44*pi is:
+    1.0961
+
+The gain at 0.7*pi is:
+    0.2861
+
+</pre><h2 id="9">3.2 (b)</h2><p>This section of code creates h for three different L's, L = 10, 20 &amp; 40. It finds the frequency response for all three versions using the 'fourier_transform' function. It then finds the passband by using the 'find' function to find the indices of H where H is greater than <img src="main_eq03589091777961773714.png" alt="$\frac{1}{\sqrt{2}}H_{max}$" style="width:36px;height:16px;">. It also finds the stopband where H is less than <img src="main_eq13014070956277634298.png" alt="$0.25H_{max}$" style="width:44px;height:10px;">. It calculates the width of the passband and plots the frequency response, highlighting where the passband and stopband are.</p><pre class="codeinput"><span class="comment">%%%%%%%%%%</span>
+<span class="comment">% L = 10 %</span>
+<span class="comment">%%%%%%%%%%</span>
+passband_indices_L10 = find(abs(H_L10) &gt;= (1/sqrt(2))*max(abs(H_L10)));
+stopband_indices_L10 = find(abs(H_L10) &lt; 0.25*max(abs(H_L10)));
+
+passband_L10 = w(passband_indices_L10);
+passbandWidth_L10 = passband_L10(end) - passband_L10(1);
+
+<span class="comment">%%%%%%%%%%</span>
+<span class="comment">% L = 20 %</span>
+<span class="comment">%%%%%%%%%%</span>
+L = 20;
+n_L20 = 0:(L-1);
+h_L20 = (2/L)*cos(omega_cutoff * n_L20);
+H_L20 = fourier_transform(h_L20,n_L20,w);
+
+passband_indices_L20 = find(abs(H_L20) &gt;= (1/sqrt(2))*max(abs(H_L20)));
+stopband_indices_L20 = find(abs(H_L20) &lt; 0.25*max(abs(H_L20)));
+
+passband_L20 = w(passband_indices_L20);
+passbandWidth_L20 = passband_L20(end) - passband_L20(1);
+
+<span class="comment">%%%%%%%%%%</span>
+<span class="comment">% L = 40 %</span>
+<span class="comment">%%%%%%%%%%</span>
+L = 40;
+n_L40 = 0:(L-1);
+h_L40 = (2/L)*cos(omega_cutoff * n_L40);
+H_L40 = fourier_transform(h_L40,n_L40,w);
+
+passband_indices_L40 = find(abs(H_L40) &gt;= (1/sqrt(2))*max(abs(H_L40)));
+stopband_indices_L40 = find(abs(H_L40) &lt; 0.25*max(abs(H_L40)));
+
+passband_L40 = w(passband_indices_L40);
+passbandWidth_L40 = passband_L40(end) - passband_L40(1);
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">% Plotting the Passband and Stopband of L = 10, 20, &amp; 40 %</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+figure;
+subplot(3,1,1);
+plot(w,abs(H_L10));
+hold <span class="string">on</span>;
+plot(w(passband_indices_L10), ones(1,length(passband_indices_L10))*(1/sqrt(2))*max(abs(H_L10)), <span class="string">'.r'</span>);
+plot(w(stopband_indices_L10), ones(1,length(stopband_indices_L10))*0.25*max(abs(H_L10)), <span class="string">'.b'</span>);
+legend(<span class="string">""</span>,<span class="string">"Passband"</span>, <span class="string">"Stopband"</span>); title(<span class="string">"Frequency Response, L=10"</span>);
+xlabel(<span class="string">"\omega (radians)"</span>); ylabel(<span class="string">"Magnitude"</span>);
+hold <span class="string">off</span>;
+
+subplot(3,1,2);
+plot(w,abs(H_L20));
+hold <span class="string">on</span>;
+plot(w(passband_indices_L20), ones(1,length(passband_indices_L20))*(1/sqrt(2))*max(abs(H_L20)), <span class="string">'.r'</span>);
+plot(w(stopband_indices_L20), ones(1,length(stopband_indices_L20))*0.25*max(abs(H_L20)), <span class="string">'.b'</span>);
+legend(<span class="string">""</span>,<span class="string">"Passband"</span>, <span class="string">"Stopband"</span>); title(<span class="string">"Frequency Response, L=20"</span>);
+xlabel(<span class="string">"\omega (radians)"</span>); ylabel(<span class="string">"Magnitude"</span>);
+hold <span class="string">off</span>;
+
+subplot(3,1,3);
+plot(w,abs(H_L40));
+hold <span class="string">on</span>;
+plot(w(passband_indices_L40), ones(1,length(passband_indices_L40))*(1/sqrt(2))*max(abs(H_L40)), <span class="string">'.r'</span>);
+plot(w(stopband_indices_L40), ones(1,length(stopband_indices_L40))*0.25*max(abs(H_L40)), <span class="string">'.b'</span>);
+legend(<span class="string">""</span>,<span class="string">"Passband"</span>, <span class="string">"Stopband"</span>); title(<span class="string">"Frequency Response, L=40"</span>);
+xlabel(<span class="string">"\omega (radians)"</span>); ylabel(<span class="string">"Magnitude"</span>);
+hold <span class="string">off</span>;
+
+disp(<span class="string">"The passband width when L=10 is:"</span>);
+disp(passbandWidth_L10 + <span class="string">" radians"</span>);
+disp(<span class="string">"The passband width when L=20 is:"</span>);
+disp(passbandWidth_L20 + <span class="string">" radians"</span>);
+disp(<span class="string">"The passband width when L=40 is:"</span>);
+disp(passbandWidth_L40 + <span class="string">" radians"</span>);
+</pre><pre class="codeoutput">The passband width when L=10 is:
+0.50894 radians
+The passband width when L=20 is:
+0.27332 radians
+The passband width when L=40 is:
+0.13195 radians
+</pre><img vspace="5" hspace="5" src="main_05.png" alt=""> <p>When L doubles, the bandwidth is halfed. When L halves, the bandwidth of the filter doubles.</p><h2 id="11">3.2 (c)</h2><p>The frequencies in the range <img src="main_eq04657101988844725873.png" alt="$0.363\pi - 0.525\pi$" style="width:77px;height:8px;"> radians are passed by the L=10 filter. Frequencies that have a higher magnitude in the frequency response of the filter, such as the frequency <img src="main_eq04002060871529333507.png" alt="$\omega=0.44\pi$" style="width:48px;height:8px;">, will have a higher gain and therefore be passed through the filter. Frequencies that have a lower magnitude in the frequency response of the filter, such as <img src="main_eq05755276656520841724.png" alt="$\omega=0.3\pi$" style="width:43px;height:8px;"> &amp; <img src="main_eq12447480970335172309.png" alt="$\omega=0.7\pi$" style="width:43px;height:8px;">, will have a lower gain and will be attenuated by the filter.</p><h2 id="12">3.2 (d)</h2><p>This sections designs a filter that will pass the frequency <img src="main_eq04002060871529333507.png" alt="$\omega=0.44\pi$" style="width:48px;height:8px;">, but will block everything below <img src="main_eq05755276656520841724.png" alt="$\omega=0.3\pi$" style="width:43px;height:8px;"> and everything above <img src="main_eq12447480970335172309.png" alt="$\omega=0.7\pi$" style="width:43px;height:8px;"> by at least a factor of 10. It does this by creating a 'for' loop and incrementing L until the magnitude at all of the frequencies below <img src="main_eq00094476455926635284.png" alt="$0.3\pi$" style="width:20px;height:8px;"> and above <img src="main_eq02627063514923424935.png" alt="$0.7\pi$" style="width:20px;height:8px;"> is below 0.1.</p><pre class="codeinput">wIndex_0_3 = find(round(w,4) == round(0.3*pi,4));
+wIndex_0_7 = find(round(w,4) == round(0.7*pi,4));
+<span class="keyword">for</span> L_loop = 1:50
+    n = 0:(L_loop-1);
+    h = (2/L_loop)*cos(omega_cutoff*n);
+    H = fourier_transform(h,n,w);
+
+    gains_less_than_0_3 = abs(H(1:wIndex_0_3));
+    gains_greater_than_0_7 = abs(H(wIndex_0_7:end));
+
+    reducedCheck_lower = gains_less_than_0_3 &gt; 0.1;
+    reducedCheck_higher = gains_greater_than_0_7 &gt; 0.1;
+
+    numFreqTooHigh_lower = sum(reducedCheck_lower);
+    numFreqTooHigh_higher = sum(reducedCheck_higher);
+
+    <span class="keyword">if</span>((numFreqTooHigh_lower == 0) &amp;&amp; (numFreqTooHigh_higher == 0))
+        <span class="keyword">break</span>;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+disp(<span class="string">"The minimum L that will reduce all frequencies below 0.3*pi and above 0.7*pi by a factor of 10 is L="</span> + L_loop);
+</pre><pre class="codeoutput">The minimum L that will reduce all frequencies below 0.3*pi and above 0.7*pi by a factor of 10 is L=37
+</pre><h2 id="13">3.2 (e)</h2><p>This block of code filters the "sum of 3 sinusoids" signal from section 3.1. It then plots 100 points from both the original signal and the filtered signal.</p><pre class="codeinput"><span class="comment">%Input Signal from 3.1(b)</span>
+n_x = 0:149;
+x = 5*cos(0.3*pi*n_x) + 22*cos(0.44*pi*n_x - pi/3) + 22*cos(0.7*pi*n_x - pi/4);
+<span class="comment">%Filtering the Signal</span>
+filtered_X = conv(h,x);
+
+<span class="comment">%Plotting 100 points of the signals</span>
+figure;
+subplot(2,1,1);
+plot(x(1:100));
+title(<span class="string">"x(n), Sum of 3 Sinusoid Signals"</span>); xlabel(<span class="string">"Samples"</span>); ylabel(<span class="string">"Amplitude"</span>);
+subplot(2,1,2);
+plot(filtered_X(length(h):length(h)+99));
+title(<span class="string">"Filtered x(n)"</span>); xlabel(<span class="string">"Samples"</span>); ylabel(<span class="string">"Amplitude"</span>);
+</pre><img vspace="5" hspace="5" src="main_06.png" alt=""> <p>In the original signal x(n), the plot shows a signal with multiple frequencies. The plot of the filtered x(n) shows a sinusoid with only one frequency. This shows that the filter successfully removed the frequencies at <img src="main_eq00094476455926635284.png" alt="$0.3\pi$" style="width:20px;height:8px;"> and <img src="main_eq02627063514923424935.png" alt="$0.7\pi$" style="width:20px;height:8px;">.</p><h2 id="15">3.2 (f)</h2><p>This section plots the frequency response of the filter that was designed in part (d).</p><pre class="codeinput">figure;
+plot(w, abs(H));
+title(<span class="string">"Frequency Response of the Filter, L="</span> + L_loop);
+xlabel(<span class="string">"\omega (radians)"</span>);
+ylabel(<span class="string">"Magnitude"</span>);
+</pre><img vspace="5" hspace="5" src="main_07.png" alt=""> <p>The frequency response shows the magnitude of the filter at each frequency. The magnitude determines the gain that is applied to each frequency of an input signal, or in other words, the output signal is equal to <img src="main_eq07898566372818311235.png" alt="$Y(e^{j\omega})=H(e^{j\omega})X(e^{j\omega})$" style="width:111px;height:12px;">. The filter was designed so that the frequencies <img src="main_eq00094476455926635284.png" alt="$0.3\pi$" style="width:20px;height:8px;"> and <img src="main_eq02627063514923424935.png" alt="$0.7\pi$" style="width:20px;height:8px;"> would be reduced by a factor of at least 10. This means that the gain of those frequencies should be at least at or below 0.1. This can be seen in the frequency response; the magnitude at <img src="main_eq00094476455926635284.png" alt="$0.3\pi$" style="width:20px;height:8px;"> and <img src="main_eq02627063514923424935.png" alt="$0.7\pi$" style="width:20px;height:8px;"> is below 0.1.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Lab 3 Exercise 3.1 Nulling Filters for Rejection
+%% 3.1 part A
+% In part A we are tasked with finding the coefficients associated with
+% the nulling filters that will force the frequency response of a desired
+% frequency to 0 which in this case is 0.44pi and 0.7pi. Associated plots
+% of magnitude and phase are presented to show the filters' efficacy.
+clear,clc
+set(groot, 'defaultLinelinewidth',3) % plotting preference
+
+ww = -pi:(pi/100):pi;
+bk1 = [1 -2*cos(0.44*pi) 1] % Filter coefficients of filter 1
+bk2 = [1 -2*cos(0.7*pi) 1] % Filter coefficients of filter 2
+filter1 = freqz(bk1,1,ww);
+filter2 = freqz(bk2,1,ww);
+
+figure
+subplot(4,1,1);
+plot(ww,abs(filter1),'c')
+title('0.44pi')
+xlabel('Frequency')
+ylabel('Magnitude')
+set(gca,'color','k')%Plots magnitude response of filter 1
+
+subplot(4,1,2);
+plot(ww,angle(filter1),'c')
+title('0.44pi')
+xlabel('Frequency')
+ylabel('Phase')
+set(gca,'color','k')%Plots phase response of filter 1
+
+subplot(4,1,3);
+plot(ww,abs(filter2),'c')
+title('0.7pi')
+xlabel('Frequency')
+ylabel('Magnitude')
+set(gca,'color','k')%Plots magnitude response of filter 2
+
+subplot(4,1,4);
+plot(ww,angle(filter2),'c') %Plots phase response of filter 2
+title('0.7pi')
+xlabel('Frequency')
+ylabel('Phase')
+set(gcf,'InvertHardcopy','off','color','w','Units','normalized','OuterPosition', [0 0 1 1])
+set(gca,'color','k')
+
+%% 3.1 Part B
+% In Part B we are tasked with generated an input signal from a given
+% equation for the first 150 samples
+
+nn = 0:149;
+xn = 5*cos(0.3*pi.*nn) + 22*cos((0.44*pi.*nn) - (pi/3)) + 22*cos((0.7*pi.*nn)- (pi/4)); %Input signal
+
+figure
+stem(nn,xn(nn+1),'c','LineWidth',3)
+title("Sum of Sinusoids")
+xlabel('Time Index (n)')
+ylabel('x(n)')
+set(gcf,'InvertHardcopy','off','color','w','Units','normalized','OuterPosition', [0 0 1 1])
+set(gca,'color','k')
+%% 3.1 Part C
+% Part C is the convolution of the input signal from Part B with the
+% nulling filters created in Part A
+
+filter = conv(bk1,bk2);
+cascfilt = conv(filter, xn);
+
+%% 3.1 Part D
+% Calculation by hand included as PDF within folder. Shown below is the plot of the
+% first 40 points for the output data from Part C that was passed through the filter
+% from Part A
+
+n = [1:40];
+figure
+plot(n-1, cascfilt(n)-1,'c') % Plots cascade
+title('Filtered Output of Sum of Sinusoids')
+xlabel('n')
+ylabel('x(n)')
+set(gcf,'InvertHardcopy','off','color','w','Units','normalized','OuterPosition', [0 0 1 1])
+set(gca,'color','k')
+%% 3.1 Part E
+% Part E provides a comparision of the output signal of the sinususoidal
+% input against the mathematically derived output for points 5 - 40.
+
+n1 = [5:40];
+n2 = [6:41];
+yn = 9.4*cos(0.3*pi*n1 - 1.88) + 0.001*cos(0.44*pi*n1 - 0.7) + 0.0007*cos(0.7*pi*n1 + 0.471);
+
+figure % filtered ouput
+subplot(2,1,1)
+plot(n1,cascfilt(n2),'-c*')
+title('Filtered Output')
+ylim([-11 10])
+set(gca,'color','k')
+
+subplot(2,1,2) % mathematically derived output
+plot(n1,yn,'-c*')
+ylim([-11 10])
+title('Mathematical Formula')
+set(gcf,'InvertHardcopy','off','color','w','Units','normalized','OuterPosition', [0 0 1 1])
+set(gca,'color','k')
+%% 3.1 Part F
+
+% The output signal is different for the first few points because the filter is causal (depends only and past and present inputs). 
+% It takes five points [0-4] for the full filter to affect the value of the sinusoid. 
+% The length of the filter is five which is one less than the combined sum
+% of the lengths of the two nulling filters (each of length 3).
+
+%% Simple Bandpass Filter Design: Lab P-12: 3.2 Lab Exercise
+
+%% 3.2 (a)
+% This section of code creates the filter h, with a cut-off frequency of
+% $\omega_c=0.44\pi$, using the equation:
+%
+% $$h[n] = \frac{2}{L} cos(\hat{\omega}_c n), \hspace{1cm} 0 \le n < L$$
+% 
+% where L = 10. It create $\omega$ from 0 to $\pi$, with spacing of
+% $\pi/1000$. It then calls the function 'fourier_transform' to get H, the
+% frequency response of the filter. 'fourier_transform' is a custom function
+% that does the same thing as 'freqz'. 'freqz' was not used because
+% it is not a built in function of MATLAB.
+%
+% The code then finds the gain of the filter at $0.3\pi$, $0.44\pi$, and
+% $0.7\pi$. It does so by finding the index of $\omega$ that matches the
+% three frequencies, and finding the magnitude of H at those indices.
+
+clear;
+
+
+omega_cutoff = 0.44*pi;
+L = 10;
+n_L10 = 0:(L-1);
+h_L10 = (2/L)*cos(omega_cutoff * n_L10);
+w = 0:(pi/1000):pi;
+H_L10 = fourier_transform(h_L10,n_L10,w);
+
+%Gain of the filter at different frequencies.
+gain_1 = abs(H_L10(round(w,4) == round(0.3*pi, 4)));   %gain_1 is at 0.3*pi
+gain_2 = abs(H_L10(round(w,4) == round(0.44*pi, 4)));  %gain_2 is at 0.44*pi
+gain_3 = abs(H_L10(round(w,4) == round(0.7*pi, 4)));   %gain_3 is at 0.7*pi
+
+disp("The gain at 0.3*pi is:");
+disp(gain_1);
+disp("The gain at 0.44*pi is:");
+disp(gain_2);
+disp("The gain at 0.7*pi is:");
+disp(gain_3);
+
+%% 3.2 (b)
+% This section of code creates h for three different L's, L = 10, 20 & 40.
+% It finds the frequency response for all three versions using the
+% 'fourier_transform' function. It then finds the passband by using the
+% 'find' function to find the indices of H where H is greater than
+% $\frac{1}{\sqrt{2}}H_{max}$. It also finds the stopband where H is less
+% than $0.25H_{max}$. It calculates the width of the passband and plots the
+% frequency response, highlighting where the passband and stopband are.
+
+%%%%%%%%%%
+% L = 10 %
+%%%%%%%%%%
+passband_indices_L10 = find(abs(H_L10) >= (1/sqrt(2))*max(abs(H_L10)));
+stopband_indices_L10 = find(abs(H_L10) < 0.25*max(abs(H_L10)));
+
+passband_L10 = w(passband_indices_L10);
+passbandWidth_L10 = passband_L10(end) - passband_L10(1);
+
+%%%%%%%%%%
+% L = 20 %
+%%%%%%%%%%
+L = 20;
+n_L20 = 0:(L-1);
+h_L20 = (2/L)*cos(omega_cutoff * n_L20);
+H_L20 = fourier_transform(h_L20,n_L20,w);
+
+passband_indices_L20 = find(abs(H_L20) >= (1/sqrt(2))*max(abs(H_L20)));
+stopband_indices_L20 = find(abs(H_L20) < 0.25*max(abs(H_L20)));
+
+passband_L20 = w(passband_indices_L20);
+passbandWidth_L20 = passband_L20(end) - passband_L20(1);
+
+%%%%%%%%%%
+% L = 40 %
+%%%%%%%%%%
+L = 40;
+n_L40 = 0:(L-1);
+h_L40 = (2/L)*cos(omega_cutoff * n_L40);
+H_L40 = fourier_transform(h_L40,n_L40,w);
+
+passband_indices_L40 = find(abs(H_L40) >= (1/sqrt(2))*max(abs(H_L40)));
+stopband_indices_L40 = find(abs(H_L40) < 0.25*max(abs(H_L40)));
+
+passband_L40 = w(passband_indices_L40);
+passbandWidth_L40 = passband_L40(end) - passband_L40(1);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plotting the Passband and Stopband of L = 10, 20, & 40 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure;
+subplot(3,1,1);
+plot(w,abs(H_L10));
+hold on;
+plot(w(passband_indices_L10), ones(1,length(passband_indices_L10))*(1/sqrt(2))*max(abs(H_L10)), '.r');
+plot(w(stopband_indices_L10), ones(1,length(stopband_indices_L10))*0.25*max(abs(H_L10)), '.b');
+legend("","Passband", "Stopband"); title("Frequency Response, L=10");
+xlabel("\omega (radians)"); ylabel("Magnitude");
+hold off;
+
+subplot(3,1,2);
+plot(w,abs(H_L20));
+hold on;
+plot(w(passband_indices_L20), ones(1,length(passband_indices_L20))*(1/sqrt(2))*max(abs(H_L20)), '.r');
+plot(w(stopband_indices_L20), ones(1,length(stopband_indices_L20))*0.25*max(abs(H_L20)), '.b');
+legend("","Passband", "Stopband"); title("Frequency Response, L=20");
+xlabel("\omega (radians)"); ylabel("Magnitude");
+hold off;
+
+subplot(3,1,3);
+plot(w,abs(H_L40));
+hold on;
+plot(w(passband_indices_L40), ones(1,length(passband_indices_L40))*(1/sqrt(2))*max(abs(H_L40)), '.r');
+plot(w(stopband_indices_L40), ones(1,length(stopband_indices_L40))*0.25*max(abs(H_L40)), '.b');
+legend("","Passband", "Stopband"); title("Frequency Response, L=40");
+xlabel("\omega (radians)"); ylabel("Magnitude");
+hold off;
+
+disp("The passband width when L=10 is:");
+disp(passbandWidth_L10 + " radians");
+disp("The passband width when L=20 is:");
+disp(passbandWidth_L20 + " radians");
+disp("The passband width when L=40 is:");
+disp(passbandWidth_L40 + " radians");
+
+%%
+% When L doubles, the bandwidth is halfed. When L halves, the bandwidth of
+% the filter doubles.
+
+%% 3.2 (c)
+% The frequencies in the range $0.363\pi - 0.525\pi$ radians are passed by
+% the L=10 filter. Frequencies that have a higher magnitude in the
+% frequency response of the filter, such as the frequency $\omega=0.44\pi$,
+% will have a higher gain and therefore be passed through the filter.
+% Frequencies that have a lower magnitude in the frequency response of the
+% filter, such as $\omega=0.3\pi$ & $\omega=0.7\pi$, will have a lower gain
+% and will be attenuated by the filter.
+
+%% 3.2 (d)
+% This sections designs a filter that will pass the frequency
+% $\omega=0.44\pi$, but will block everything below $\omega=0.3\pi$ and
+% everything above $\omega=0.7\pi$ by at least a factor of 10. It does this
+% by creating a 'for' loop and incrementing L until the magnitude at all of
+% the frequencies below $0.3\pi$ and above $0.7\pi$ is below 0.1.
+
+wIndex_0_3 = find(round(w,4) == round(0.3*pi,4));
+wIndex_0_7 = find(round(w,4) == round(0.7*pi,4));
+for L_loop = 1:50
+    n = 0:(L_loop-1);
+    h = (2/L_loop)*cos(omega_cutoff*n);
+    H = fourier_transform(h,n,w);
+       
+    gains_less_than_0_3 = abs(H(1:wIndex_0_3));
+    gains_greater_than_0_7 = abs(H(wIndex_0_7:end));
+    
+    reducedCheck_lower = gains_less_than_0_3 > 0.1;
+    reducedCheck_higher = gains_greater_than_0_7 > 0.1;
+    
+    numFreqTooHigh_lower = sum(reducedCheck_lower);
+    numFreqTooHigh_higher = sum(reducedCheck_higher);
+    
+    if((numFreqTooHigh_lower == 0) && (numFreqTooHigh_higher == 0))
+        break;
+    end
+end
+
+disp("The minimum L that will reduce all frequencies below 0.3*pi and above 0.7*pi by a factor of 10 is L=" + L_loop);
+
+%% 3.2 (e)
+% This block of code filters the "sum of 3 sinusoids" signal from section
+% 3.1. It then plots 100 points from both the original signal and the
+% filtered signal.
+
+%Input Signal from 3.1(b)
+n_x = 0:149;
+x = 5*cos(0.3*pi*n_x) + 22*cos(0.44*pi*n_x - pi/3) + 22*cos(0.7*pi*n_x - pi/4);
+%Filtering the Signal
+filtered_X = conv(h,x);
+
+%Plotting 100 points of the signals
+figure;
+subplot(2,1,1);
+plot(x(1:100));
+title("x(n), Sum of 3 Sinusoid Signals"); xlabel("Samples"); ylabel("Amplitude");
+subplot(2,1,2);
+plot(filtered_X(length(h):length(h)+99));
+title("Filtered x(n)"); xlabel("Samples"); ylabel("Amplitude");
+
+%%
+% In the original signal x(n), the plot shows a signal with multiple
+% frequencies. The plot of the filtered x(n) shows a sinusoid with only one
+% frequency. This shows that the filter successfully removed the
+% frequencies at $0.3\pi$ and $0.7\pi$.
+
+%% 3.2 (f)
+% This section plots the frequency response of the filter that was designed
+% in part (d).
+
+figure;
+plot(w, abs(H));
+title("Frequency Response of the Filter, L=" + L_loop);
+xlabel("\omega (radians)");
+ylabel("Magnitude");
+
+%%
+% The frequency response shows the magnitude of the filter at each
+% frequency. The magnitude determines the gain that is applied to each
+% frequency of an input signal, or in other words, the output signal is
+% equal to $Y(e^{j\omega})=H(e^{j\omega})X(e^{j\omega})$. The filter was
+% designed so that the frequencies $0.3\pi$ and $0.7\pi$ would be reduced
+% by a factor of at least 10. This means that the gain of those frequencies
+% should be at least at or below 0.1. This can be seen in the frequency
+% response; the magnitude at $0.3\pi$ and $0.7\pi$ is below 0.1.
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
